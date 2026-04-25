@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import Optional, Tuple
 
 from .board import Board, Move
+from .search import find_best_move
 
 
 @dataclass
@@ -13,8 +14,9 @@ class ChessEngine:
     depth: int = 2
 
     def analyze(self, board: Board) -> Tuple[Optional[Move], int]:
-        raise NotImplementedError("TODO: call your search function and return move plus score.")
+        return find_best_move(board, self.depth)
 
     def choose_move(self, board: Board) -> Optional[Move]:
-        raise NotImplementedError("TODO: return only the selected move.")
+        move, _ = self.analyze(board)
+        return move
 

@@ -1,9 +1,21 @@
 # Chess Engine
 
-Learning-oriented chess engine scaffold in Python.
+Small chess engine in Python built on top of `python-chess`.
 
-The implementation has been intentionally removed so you can build it by hand.
-The project keeps the module split and packaging setup, but the engine logic is now a set of TODO stubs.
+This version uses `python-chess` for:
+
+- board representation
+- FEN parsing
+- legal move generation
+- check and game-over detection
+
+That lets you focus on the engine parts that still teach a lot:
+
+- evaluation
+- search
+- move ordering
+- engine orchestration
+- CLI design
 
 ## Project Layout
 
@@ -26,24 +38,14 @@ python-chess-engine/
 └── pyproject.toml
 ```
 
-## Build Order
+## What The Code Does
 
-1. `board.py`: `Move`, `Board`, FEN loading, `piece_at`, `make_move`
-2. `move_generator.py`: pseudo-legal moves for each piece
-3. legality filtering: reject moves that leave your king in check
-4. `evaluation.py`: material score first, then positional ideas
-5. `search.py`: minimax, then alpha-beta pruning
-6. `engine.py`: connect board + search
-7. `main.py`: simple CLI
-8. `tests/test_board.py`: grow tests as features land
-
-## First Milestones
-
-- parse a FEN into an 8x8 board
-- print the board in ASCII
-- generate 20 legal moves from the starting position
-- detect check in a simple rook or bishop position
-- return a best move at depth 1
+- `board.py`: wraps `python-chess` and exposes your project API
+- `move_generator.py`: returns legal and pseudo-legal moves from the wrapped board
+- `evaluation.py`: scores a position from White's point of view
+- `search.py`: alpha-beta search with a simple move-ordering heuristic
+- `engine.py`: small high-level engine wrapper
+- `main.py`: terminal commands for `bestmove` and `play`
 
 ## Setup
 
@@ -53,12 +55,20 @@ source .venv/bin/activate
 python -m pip install -r requirements.txt
 python -m pip install -e .
 python -m pytest
+chess-engine bestmove --depth 2
 ```
 
-## Recommended Workflow
+## Example
 
-- write one small feature
-- add or update one test
-- run tests
-- ask for review when something feels unclear or wrong
+```bash
+chess-engine bestmove --depth 2 --fen "r1bqkbnr/pppp1ppp/2n5/4p3/3PP3/5N2/PPP2PPP/RNBQKB1R b KQkq - 2 3"
+```
+
+## Next Improvements
+
+1. Add piece-square tables to `evaluation.py`.
+2. Add quiescence search to reduce tactical blunders.
+3. Add iterative deepening and a time limit.
+4. Add a transposition table.
+5. Add a UCI interface so you can use the engine in a GUI.
 

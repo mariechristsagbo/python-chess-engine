@@ -1,33 +1,28 @@
-"""Move generation for the chess engine.
-
-Suggested milestones:
-1. generate pawn moves
-2. generate knight moves
-3. generate sliding-piece moves
-4. generate king moves
-5. filter pseudo-legal moves into legal moves
-6. add special moves later: castling and en passant
-"""
+"""Move-generation helpers backed by python-chess."""
 
 from __future__ import annotations
 
 from typing import List
 
-from .board import Board, Move
+from .board import Board, Move, _square_index, _turn_from_color
 
 
 def generate_legal_moves(board: Board) -> List[Move]:
-    raise NotImplementedError("TODO: generate legal moves for the side to move.")
+    return [Move.from_chess(move) for move in board.position.legal_moves]
 
 
 def generate_pseudo_legal_moves(board: Board) -> List[Move]:
-    raise NotImplementedError("TODO: generate moves without checking king safety first.")
+    return [Move.from_chess(move) for move in board.position.pseudo_legal_moves]
 
 
 def is_in_check(board: Board, color: str) -> bool:
-    raise NotImplementedError("TODO: detect whether the given side's king is under attack.")
+    turn = _turn_from_color(color)
+    king_square = board.position.king(turn)
+    if king_square is None:
+        raise ValueError(f"King not found for color {color!r}")
+    return board.position.is_attacked_by(not turn, king_square)
 
 
 def is_square_attacked(board: Board, row: int, col: int, by_color: str) -> bool:
-    raise NotImplementedError("TODO: detect whether a square is attacked by the given side.")
+    return board.position.is_attacked_by(_turn_from_color(by_color), _square_index(row, col))
 
