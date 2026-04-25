@@ -29,6 +29,7 @@ python-chess-engine/
 │       ├── evaluation.py
 │       ├── search.py
 │       ├── engine.py
+│       ├── gui.py
 │       └── main.py
 ├── tests/
 │   └── test_board.py
@@ -45,7 +46,8 @@ python-chess-engine/
 - `evaluation.py`: scores a position from White's point of view
 - `search.py`: alpha-beta search with a simple move-ordering heuristic
 - `engine.py`: small high-level engine wrapper
-- `main.py`: terminal commands for `bestmove` and `play`
+- `gui.py`: clickable Tkinter board for testing moves interactively
+- `main.py`: terminal commands for `bestmove`, `play`, and `gui`
 
 ## Setup
 
@@ -56,12 +58,25 @@ python -m pip install -r requirements.txt
 python -m pip install -e .
 python -m pytest
 chess-engine bestmove --depth 2
+chess-engine gui --depth 2
 ```
 
 ## Example
 
 ```bash
 chess-engine bestmove --depth 2 --fen "r1bqkbnr/pppp1ppp/2n5/4p3/3PP3/5N2/PPP2PPP/RNBQKB1R b KQkq - 2 3"
+```
+
+Open the graphical board:
+
+```bash
+chess-engine gui --depth 2 --human-color w
+```
+
+If you want to move both sides manually without engine replies:
+
+```bash
+chess-engine gui --human-color both
 ```
 
 ## Next Improvements
@@ -71,4 +86,3 @@ chess-engine bestmove --depth 2 --fen "r1bqkbnr/pppp1ppp/2n5/4p3/3PP3/5N2/PPP2PP
 3. Add iterative deepening and a time limit.
 4. Add a transposition table.
 5. Add a UCI interface so you can use the engine in a GUI.
-

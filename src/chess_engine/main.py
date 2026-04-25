@@ -7,6 +7,7 @@ from typing import List, Optional
 
 from .board import Board, Move, STARTING_FEN
 from .engine import ChessEngine
+from .gui import run_gui
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -16,11 +17,16 @@ def build_parser() -> argparse.ArgumentParser:
     play_parser = subparsers.add_parser("play", help="Play against the engine in the terminal")
     play_parser.add_argument("--depth", type=int, default=2, help="Search depth")
     play_parser.add_argument("--fen", default=STARTING_FEN, help="Starting FEN")
-    play_parser.add_argument("--human-color", choices=("w", "b"), default="w", help="Your side")
+    play_parser.add_argument("--human-color", choices=("w", "b", "both"), default="w", help="Your side")
 
     bestmove_parser = subparsers.add_parser("bestmove", help="Show the best move from a position")
     bestmove_parser.add_argument("--depth", type=int, default=2, help="Search depth")
     bestmove_parser.add_argument("--fen", default=STARTING_FEN, help="Position FEN")
+
+    gui_parser = subparsers.add_parser("gui", help="Open a Tkinter board for interactive testing")
+    gui_parser.add_argument("--depth", type=int, default=2, help="Search depth")
+    gui_parser.add_argument("--fen", default=STARTING_FEN, help="Starting FEN")
+    gui_parser.add_argument("--human-color", choices=("w", "b", "both"), default="w", help="Your side")
 
     parser.add_argument("--version", action="store_true", help="Show the installed package version")
     return parser
@@ -42,6 +48,8 @@ def main(argv: Optional[List[str]] = None) -> int:
         return _play(depth=args.depth, fen=args.fen, human_color=args.human_color)
     if args.command == "bestmove":
         return _best_move(depth=args.depth, fen=args.fen)
+    if args.command == "gui":
+        return run_gui(depth=args.depth, fen=args.fen, human_color=args.human_color)
 
     parser.error(f"Unknown command: {args.command}")
     return 2
@@ -58,7 +66,7 @@ def _play(depth: int, fen: str, human_color: str) -> int:
             print(outcome)
             return 0
 
-        if board.side_to_move == human_color:
+        if human_color == "both" or board.side_to_move == human_color:
             user_input = input("Your move (uci, moves, fen, quit): ").strip().lower()
             if user_input in {"quit", "exit"}:
                 return 0
